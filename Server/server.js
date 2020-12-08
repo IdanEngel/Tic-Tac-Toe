@@ -3,7 +3,13 @@ const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  showUsers,
+} = require("./users");
 
 const PORT = process.env.PORT || 8080;
 
@@ -23,12 +29,34 @@ io.on("connection", (socket) => {
   socket.on("join", ({ name, room }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
 
+    console.log(showUsers());
+
     if (error) console.log(error);
 
     socket.emit("message", {
       user: "admin",
       text: `${user.name} welcome to the room ${user.room}`,
     });
+
+    socket.on("handleClick", (data, cb) => {
+      const newData =  JSON.parse(data)
+      console.log('balulu balala balele');
+      console.log('XO', newData);
+      io.to(user.room).emit("send", { user: user.name, data: newData });
+      cb()
+    });
+    // socket.on("turnChange", (data, cb) => {
+    //   io.to(user.room).emit("send", { user: user.name, data: data });
+    //   cb()
+    // });
+
+    socket.on("click", (counter, cb) => {
+      io.to(user.room).emit("message", { user: user.name, data: counter });
+      cb()
+    });
+
+   
+
     socket.broadcast
       .to(user.room)
       .emit("message", { user: "admin", text: `${user.name} has joind` });
@@ -46,8 +74,9 @@ io.on("connection", (socket) => {
     cb();
   });
 
-  socket.on("disconnect", () => {
-    console.log("user had left!!!");
+  socket.once("disconnect", () => {
+    console.log('User Disconnected');
+    io.emit("message", "user had left!!!");
   });
 });
 
