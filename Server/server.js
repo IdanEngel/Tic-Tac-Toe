@@ -5,10 +5,8 @@ const http = require("http");
 
 const {
   addUser,
-  removeUser,
-  getUser,
-  getUsersInRoom,
   showUsers,
+  getUser
 } = require("./users");
 
 const PORT = process.env.PORT || 8080;
@@ -39,31 +37,16 @@ io.on("connection", (socket) => {
     });
 
     socket.on("handleClick", (data, cb) => {
-      const newData =  JSON.parse(data)
-      console.log('balulu balala balele');
-      console.log('XO', newData);
+      const newData = JSON.parse(data);
       io.to(user.room).emit("send", { user: user.name, data: newData });
-      cb()
+      cb();
     });
-    // socket.on("turnChange", (data, cb) => {
-    //   io.to(user.room).emit("send", { user: user.name, data: data });
-    //   cb()
-    // });
-
-    socket.on("click", (counter, cb) => {
-      io.to(user.room).emit("message", { user: user.name, data: counter });
-      cb()
-    });
-
-   
 
     socket.broadcast
       .to(user.room)
       .emit("message", { user: "admin", text: `${user.name} has joind` });
 
     socket.join(user.room);
-
-    // callback();
   });
 
   socket.on("sendMessage", (messgae, cb) => {
@@ -75,7 +58,7 @@ io.on("connection", (socket) => {
   });
 
   socket.once("disconnect", () => {
-    console.log('User Disconnected');
+    console.log("User Disconnected");
     io.emit("message", "user had left!!!");
   });
 });

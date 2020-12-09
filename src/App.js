@@ -1,13 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
 import shortid from "shortid";
-import Board from "./components/Board";
 import Game from "./components/Game";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import queryString from "query-string";
-import io from "socket.io-client";
-let socket;
 let roomId = null; // Unique id when player creates a room
 
 const App = () => {
@@ -25,7 +20,7 @@ const App = () => {
 
   const onPressCreate = () => {
     if (state.name) {
-      roomId =  shortid.generate().substring(0, 5);
+      roomId = shortid.generate().substring(0, 5);
       setState({
         piece: "X",
         name: state.name,
@@ -76,8 +71,6 @@ const App = () => {
 
   const onPressJoin = (e) => {
     if (state.name) {
-
-
       Swal.fire({
         position: "top",
         input: "text",
@@ -102,8 +95,7 @@ const App = () => {
         setState({
           piece: "O",
           name: state.name,
-          isPlaying: true
-
+          isPlaying: true,
         });
       });
     } else {
@@ -126,69 +118,50 @@ const App = () => {
 
   return (
     <>
-  
-        <div className="title">
-          <p> React Tic Tac Toe </p>
-        </div>
+      <div className="title">
+        <p> Tic Tac Toe </p>
+      </div>
 
-        {!state.isPlaying && (
-          <div className="game">
-            <div className="board">
-              <Board squares={0} onClick={(index) => null} />
+      {!state.isPlaying && (
+        <div className="game">
+          <div className="board">
+            <div className="button-container">
+              <button
+                className="create-button "
+                disabled={state.isDisabled}
+                onClick={(e) => onPressCreate()}
+              >
+                Create
+              </button>
+              <button className="join-button" onClick={(e) => onPressJoin()}>
+                Join
+              </button>
 
-              <div className="button-container">
-                {/* <Link
-                  onClick={(e) =>
-                    !state.name || roomId ? e.preventDefault() : null
-                  }
-                  to={`/chat?room=${roomId}`}
-                > */}
-                  <button
-                    className="create-button "
-                    disabled={state.isDisabled}
-                    onClick={(e) => onPressCreate()}
-                  >
-                    Create
-                  </button>
-                  <button
-                    className="join-button"
-                    onClick={(e) => onPressJoin()}
-                  >
-                    Join
-                  </button>
-                {/* </Link> */}
-
-                <br />
-                <input
-                  type="text"
-                  placeholder="Name"
-                  onChange={(e) =>
-                    setState({
-                      name: e.target.value,
-                    })
-                  }
-                />
-              </div>
+              <br />
+              <input
+              className='name-input'
+                type="text"
+                placeholder="Name"
+                onChange={(e) =>
+                  setState({
+                    name: e.target.value,
+                  })
+                }
+              />
             </div>
           </div>
-        )}
-        {state.isPlaying && state.name && (
-          // <Route
-            // path="/game"
-            // component={Game}
-            <Game
-            name={state.name}
-            room={roomId}
-            gameChannel={gameChannel}
-            piece={state.piece}
-            isRoomCreator={state.isRoomCreator}
-            myTurn={state.myTurn}
-            // xUsername={state.xUsername}
-            // oUsername={state.oUsername}
-            // endGame={endGame}
-          />
-        )}
-      {/* </Router> */}
+        </div>
+      )}
+      {state.isPlaying && state.name && (
+        <Game
+          name={state.name}
+          room={roomId}
+          gameChannel={gameChannel}
+          piece={state.piece}
+          isRoomCreator={state.isRoomCreator}
+          myTurn={state.myTurn}
+        />
+      )}
     </>
   );
 };

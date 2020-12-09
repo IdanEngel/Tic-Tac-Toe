@@ -19,19 +19,11 @@ const addUser = ({ id, name, room }) => {
   return { user };
 };
 
-const removeUser = id => {
-    const index = users.findIndex(user => user.id === id)
-
-    if (index !== -1) {
-        users.splice(index, 1);
-    }
-};
 
 const getUser = id => users.find(user => user.id === id);
 
-const getUsersInRoom = room => users.filter(user => user.room === room);
 
 const showUsers = () => users
 
 
-module.exports = {addUser, removeUser, getUser, getUsersInRoom ,showUsers}
+module.exports = {addUser, getUser ,showUsers}

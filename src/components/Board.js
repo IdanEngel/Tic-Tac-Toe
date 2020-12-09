@@ -1,11 +1,17 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
+import Squaretest from './Square'
 
-const Board = () => {
+function Boardtest({ squares, onClick}) {
+
+
     return (
-        <div>
-           <h1>Board!!!!!!</h1> 
+        <div className='board'>
+            {squares.map((square, i) => (
+                <Squaretest key={i} value={square} onClick={() => onClick(i)} />
+            ))}
         </div>
     )
 }
 
-export default Board
+export default Boardtest
